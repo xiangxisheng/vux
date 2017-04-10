@@ -7,6 +7,7 @@
         <a :href="getUrl(item.url)" v-for="item in list" @click.prevent="onItemClick(item)" class="weui-media-box weui-media-box_appmsg">
           <div class="weui-media-box__hd" v-if="item.src">
             <img class="weui-media-box__thumb" :src="item.src" alt="">
+            <span class="vux-badge" style="position: absolute;top: -.4em;right: -.4em;" v-if="item.badge">{{item.badge}}</span>
           </div>
           <div class="weui-media-box__bd">
             <h4 class="weui-media-box__title">{{item.title}}</h4>
