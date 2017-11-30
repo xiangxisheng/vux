@@ -4,7 +4,6 @@
 
 <script>
 export default {
-  name: 'icon',
   props: {
     type: String,
     isMsg: Boolean

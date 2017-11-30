@@ -93,13 +93,10 @@ function strftime (offsetObject) {
       .replace('%_M2', offsetObject.minutes_2)
       .replace('%_S1', offsetObject.seconds_1)
       .replace('%_S2', offsetObject.seconds_2)
-      .replace('%_S3', offsetObject.seconds_3)
       .replace('%_H1', offsetObject.hours_1)
       .replace('%_H2', offsetObject.hours_2)
-      .replace('%_H3', offsetObject.hours_3)
       .replace('%_D1', offsetObject.days_1)
       .replace('%_D2', offsetObject.days_2)
-      .replace('%_D3', offsetObject.days_3)
     format = format.replace(/%%/, '%')
     return format
   }
@@ -212,9 +209,8 @@ var fns = {
     for (var i = 0; i < list.length; i++) {
       var key = list[i]
       var numbers = splitNumber(this.offset[key])
-      for (let n = 0; n < numbers.length; n++) {
-        this.offset[`${key}_${n + 1}`] = numbers[n]
-      }
+      this.offset[key + '_1'] = numbers[0]
+      this.offset[key + '_2'] = numbers[1]
     }
     // Dispatch an event
     if (this.totalSecsLeft === 0) {

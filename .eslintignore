@@ -3,4 +3,3 @@ src/assets/*/*.js
 src/libs/eventor.js
 config/*.js
 src/tools/*/*.js
-src/components/video/zy.media.js

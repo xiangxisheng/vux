@@ -11,10 +11,6 @@ if (!version) {
   throw('no version specified')
 }
 
-const pkg = require(getPath('../package.json'))
-const pkgContent = fs.readFileSync(getPath('../package.json'), 'utf-8')
-fs.writeFileSync(getPath('../package.json'), pkgContent.replace(pkg.version, version.replace('v', '')))
-
 glob(getPath('../src/**/**/metas.yml'), {}, function (err, files) {
   let rs = []
   files.forEach(function (file) {
@@ -25,7 +21,7 @@ glob(getPath('../src/**/**/metas.yml'), {}, function (err, files) {
       console.log(line)
       if (/next:/.test(line)) {
         return line.replace('next', `${version}`)
-      } else if (/version: next/.test(line)) {
+      } else if (/version:\d*next/.test(line)) {
         return line.replace('next', `${version}`)
       }
       return line

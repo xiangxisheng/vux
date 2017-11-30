@@ -11,7 +11,6 @@
 import { toRGB } from './converter'
 
 export default {
-  name: 'masker',
   props: {
     color: {
       type: String,

@@ -2,7 +2,7 @@
   <div>
     <group>
       <cell title="used in cell">
-        <x-icon type="ios-plus" class="cell-x-icon" @click="console"></x-icon>
+        <x-icon type="ios-plus" class="cell-x-icon"></x-icon>
       </cell>
     </group>
     <div style="padding: 15px;">
@@ -55,11 +55,6 @@ export default {
   components: {
     Group,
     Cell
-  },
-  methods: {
-    console () {
-      console.log('click')
-    }
   }
 }
 </script>

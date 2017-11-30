@@ -2,17 +2,15 @@
   <div class="vux-cell-box">
     <div class="weui-cell vux-tap-active weui-cell_access" @click="onClick" v-show="showCell">
       <div class="weui-cell__hd">
-        <slot name="title" label-class="weui-label" :label-style="labelStyles" :label-title="title">
-          <label class="weui-label" :class="labelClass" :style="labelStyles" v-if="title" v-html="title"></label>
-        </slot>
-        <inline-desc v-if="inlineDesc">{{ inlineDesc }}</inline-desc>
+        <label class="weui-label" :style="{display: 'block', width: $parent.labelWidth || $parent.$parent.labelWidth, textAlign: $parent.labelAlign || $parent.$parent.labelAlign, marginRight: $parent.labelMarginRight || $parent.$parent.labelMarginRight}" v-if="title" v-html="title"></label>
+        <inline-desc v-if="inlineDesc">{{inlineDesc}}</inline-desc>
       </div>
       <div class="vux-cell-primary vux-popup-picker-select-box">
         <div class="vux-popup-picker-select" :style="{textAlign: valueTextAlign}">
-          <span class="vux-popup-picker-value vux-cell-value" v-if="!displayFormat && !showName && value.length">{{value | array2string}}</span>
-          <span class="vux-popup-picker-value vux-cell-value" v-if="!displayFormat && showName && value.length">{{value | value2name(data)}}</span>
-          <span class="vux-popup-picker-value vux-cell-value" v-if="displayFormat && value.length">{{ displayFormat(value, value2name(value, data)) }}</span>
-          <span v-if="!value.length && placeholder" v-text="placeholder" class="vux-popup-picker-placeholder vux-cell-placeholder"></span>
+          <span class="vux-popup-picker-value" v-if="!displayFormat && !showName && value.length">{{value | array2string}}</span>
+          <span class="vux-popup-picker-value" v-if="!displayFormat && showName && value.length">{{value | value2name(data)}}</span>
+          <span class="vux-popup-picker-value" v-if="displayFormat && value.length">{{ displayFormat(value) }}</span>
+          <span v-if="!value.length && placeholder" v-html="placeholder"></span>
         </div>
       </div>
       <div class="weui-cell__ft">
@@ -20,28 +18,21 @@
     </div>
 
     <div v-transfer-dom="isTransferDom">
-      <popup
-      v-model="showValue"
-      class="vux-popup-picker"
-      :id="`vux-popup-picker-${uuid}`"
-      @on-hide="onPopupHide"
-      @on-show="onPopupShow"
-      :popup-style="popupStyle">
+      <popup v-model="showValue" class="vux-popup-picker" :id="'vux-popup-picker-'+uuid" @on-hide="onPopupHide" @on-show="$emit('on-show')">
         <div class="vux-popup-picker-container">
-          <popup-header
-          :left-text="cancelText || $t('cancel_text')"
-          :right-text="confirmText || $t('confirm_text')"
-          @on-click-left="onHide(false)"
-          @on-click-right="onHide(true)"
-          :title="popupTitle"></popup-header>
+          <div class="vux-popup-picker-header">
+            <flexbox>
+              <flexbox-item class="vux-popup-picker-header-menu vux-popup-picker-cancel" @click.native="onHide(false)">{{cancelText || $t('cancel_text')}}</flexbox-item>
+              <flexbox-item class="vux-popup-picker-header-menu vux-popup-picker-header-menu-right" @click.native="onHide(true)">{{confirmText || $t('confirm_text')}}</flexbox-item>
+            </flexbox>
+          </div>
           <picker
           :data="data"
           v-model="tempValue"
           @on-change="onPickerChange"
           :columns="columns"
           :fixed-columns="fixedColumns"
-          :container="'#vux-popup-picker-'+uuid"
-          :column-width="columnWidth"></picker>
+          :container="'#vux-popup-picker-'+uuid"></picker>
         </div>
       </popup>
     </div>
@@ -62,7 +53,6 @@ confirm_text:
 import Picker from '../picker'
 import Cell from '../cell'
 import Popup from '../popup'
-import PopupHeader from '../popup-header'
 import InlineDesc from '../inline-desc'
 import { Flexbox, FlexboxItem } from '../flexbox'
 import array2string from '../../filters/array2String'
@@ -75,7 +65,6 @@ const getObject = function (obj) {
 }
 
 export default {
-  name: 'popup-picker',
   directives: {
     TransferDom
   },
@@ -89,7 +78,6 @@ export default {
     Picker,
     Cell,
     Popup,
-    PopupHeader,
     Flexbox,
     FlexboxItem,
     InlineDesc
@@ -138,24 +126,6 @@ export default {
     isTransferDom: {
       type: Boolean,
       default: true
-    },
-    columnWidth: Array,
-    popupStyle: Object,
-    popupTitle: String
-  },
-  computed: {
-    labelStyles () {
-      return {
-        display: 'block',
-        width: this.$parent.labelWidth || this.$parent.$parent.labelWidth || 'auto',
-        textAlign: this.$parent.labelAlign || this.$parent.$parent.labelAlign,
-        marginRight: this.$parent.labelMarginRight || this.$parent.$parent.labelMarginRight
-      }
-    },
-    labelClass () {
-      return {
-        'vux-cell-justify': this.$parent.labelAlign === 'justify' || this.$parent.$parent.labelAlign === 'justify'
-      }
     }
   },
   methods: {
@@ -179,11 +149,6 @@ export default {
         }
       }
     },
-    onPopupShow () {
-      // reset close type to false
-      this.closeType = false
-      this.$emit('on-show')
-    },
     onPopupHide (val) {
       if (this.value.length > 0) {
         this.tempValue = getObject(this.currentValue)
@@ -203,26 +168,21 @@ export default {
           // if set to auto update, do update the value
         }
       }
-      const _val = getObject(val)
-      this.$emit('on-shadow-change', _val, value2name(_val, this.data).split(' '))
+      this.$emit('on-shadow-change', getObject(val))
     }
   },
   watch: {
     value (val) {
       if (JSON.stringify(val) !== JSON.stringify(this.tempValue)) {
         this.tempValue = getObject(val)
-        this.currentValue = getObject(val)
       }
     },
     currentValue (val) {
-      this.$emit('input', getObject(val))
       this.$emit('on-change', getObject(val))
+      this.$emit('input', getObject(val))
     },
     show (val) {
       this.showValue = val
-    },
-    showValue (val) {
-      this.$emit('update:show', val)
     }
   },
   data () {
@@ -242,9 +202,6 @@ export default {
 @import '../../styles/variable.less';
 @import '../../styles/1px.less';
 
-.vux-cell-primary {
-  flex: 1;
-}
 .vux-cell-box {
   position: relative;
 }
@@ -287,6 +244,9 @@ export default {
   width: 100%;
   position: relative;
 }
+.vux-popup-picker-select span {
+  padding-right: 15px;
+}
 .vux-popup-picker-select-box.weui-cell__bd:after {
   content: " ";
   display: inline-block;
@@ -305,8 +265,5 @@ export default {
 }
 .vux-popup-picker-cancel {
   color: @popup-picker-header-cancel-text-color;
-}
-.vux-popup-picker-placeholder {
-  color: #999;
 }
 </style>

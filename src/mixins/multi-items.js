@@ -28,7 +28,6 @@ const parentMixin = {
       oldVal > -1 && this.$children[oldVal] && (this.$children[oldVal].currentSelected = false)
       val > -1 && this.$children[val] && (this.$children[val].currentSelected = true)
       this.$emit('input', val)
-      this.$emit('on-index-change', val, oldVal)
     },
     index (val) {
       this.currentIndex = val
@@ -64,15 +63,11 @@ const childMixin = {
   },
   methods: {
     onItemClick (hasLink) {
-      if (this.$parent.preventDefault) {
-        this.$parent.$emit('on-before-index-change', this.currentIndex)
-        return
-      }
       if (typeof this.disabled === 'undefined' || this.disabled === false) {
         this.currentSelected = true
         this.$parent.currentIndex = this.currentIndex
         this.$nextTick(() => {
-          this.$emit('on-item-click', this.currentIndex)
+          this.$emit('on-item-click')
         })
       }
       if (hasLink === true) {

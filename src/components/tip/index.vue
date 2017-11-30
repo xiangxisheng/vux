@@ -6,7 +6,6 @@
 
 <script>
 export default {
-  name: 'tip',
   props: {
     align: {
       type: String,

@@ -4,18 +4,15 @@
       <x-switch :title="$t('Toggle')" v-model="show1" @on-change="show1change"></x-switch>
     </group>
     <div v-transfer-dom>
-      <loading :show="show1" :text="text1"></loading>
+      <loading v-model="show1" :text="text1"></loading>
     </div>
     <div style="padding: 15px;">
-      <x-button @click.native="showLoading" type="primary">{{ $t('Show loading') }}</x-button>
+      <x-button @click.native="showLoading" type="primary">显示loading(2s后关闭)</x-button>
     </div>
   </div>
 </template>
 
 <i18n>
-Show loading:
-  en: show loading (close in 2s)
-  zh-CN: 显示loading (2s后关闭)
 </i18n>
 
 <script>

@@ -11,5 +11,4 @@ this.$device.isIpad
 this.$device.isIpod
 this.$device.isIphone
 this.$device.isWechat
-this.$device.isAlipay
 ```

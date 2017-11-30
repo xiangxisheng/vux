@@ -14,7 +14,6 @@
 import Icon from '../icon'
 
 export default {
-  name: 'timeline-item',
   data () {
     return {
       isLast: true,

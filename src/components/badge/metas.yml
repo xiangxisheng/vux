@@ -1,10 +1,5 @@
 icon: '&#xe65b;'
 color: '#f74c31'
-references:
-  zh-CN:
-    - 
-      title: 这个控件叫：Badge/徽标/小红点
-      link: https://zhuanlan.zhihu.com/p/26107887
 props:
   text:
     type: String
@@ -12,13 +7,8 @@ props:
     en: text of the Badge
     zh-CN: 显示的文字
 changes:
-  v2.3.3:
+  v2.0.0:
     en:
-      - '[feature] Use dot styles if no text is specified'
+      - '[todo] when used in a cell, it might not be that center'
     zh-CN:
-      - '[feature] 支持没有指定文字时为 红点 样式'
-  v2.2.1-rc.2:
-    en:
-      - '[fix] Fix className:vux-badge-single not work for number #1223'
-    zh-CN:
-      - '[fix] 修复个位数字样式不正确 #1223'
+      - '[todo] 在cell使用时，似乎不够居中'

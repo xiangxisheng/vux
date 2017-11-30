@@ -1,19 +1,39 @@
-import { createVM, show, hide } from './util'
+import AlertComponent from '../../components/alert'
+import { mergeOptions } from '../../libs/plugin_helper'
 
 let $vm
 
 const plugin = {
   install (Vue) {
     if (!$vm) {
-      $vm = createVM(Vue)
+      const Alert = Vue.extend(AlertComponent)
+      $vm = new Alert({
+        el: document.createElement('div')
+      })
+      document.body.appendChild($vm.$el)
     }
 
     const alert = {
       show (options = {}) {
-        return show.call(this, $vm, options)
+        if (typeof options === 'object') {
+          mergeOptions($vm, options)
+        } else if (typeof options === 'string') {
+          $vm.content = options
+        }
+        this.watcher && this.watcher()
+        this.watcher = $vm.$watch('showValue', (val) => {
+          val && options.onShow && options.onShow($vm)
+          if (val === false && options.onHide) {
+            options.onHide($vm)
+            this.watcher && this.watcher()
+          }
+        })
+        $vm.showValue = true
       },
       hide () {
-        return hide.call(this, $vm)
+        $vm.showValue = false
+        this.watcher && this.watcher()
+        this.watcher = null
       }
     }
 

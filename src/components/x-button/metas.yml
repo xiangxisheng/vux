@@ -41,40 +41,11 @@ props:
   action-type:
     en: button's type value, one of `submit`, `button`, `reset`
     zh-CN: '`button`的type属性，默认为浏览器默认(submit)，可选为 `submit` `button` `reset`'
-  link:
-    version: v2.3.5
-    en: 'vue-router path, `BACK` is alias to `go(-1)`'
-    zh-CN: 'vue-router 路由, 值为 `BACK` 等同于 `go(-1)`'
-  show-loading:
-    type: Boolean
-    default: false
-    en: 'show loading icon'
-    zh-CN: '显示加载图标'
-  gradients:
-    version: v2.7.4
-    type: Array
-    en: 'iOS design gradients, Array length should be 2'
-    zh-CN: '按钮背景渐变，长度必须为2'
 slots:
   default:
     en: button text
     zh-CN: 按钮文字
 changes:
-  v2.7.4:
-    en:
-      - '[feature] add prop:gradients for iOS design gradients'
-    zh-CN:
-      - '[feature] 顺应 iOS 设计，支持直接定义背景渐变 prop:gradients'
-  v2.7.1:
-    en:
-      - '[enhance] support object-link #2068'
-    zh-CN:
-      - '[enhance] 链接支持对象类型 #2068'
-  v2.5.0:
-    en:
-      - '[feature] Add primary、warn disabled bg color. #1630'
-    zh-CN:
-      - '[feature] 添加禁用背景颜色. #1630'
   v2.1.1-rc.10:
     en:
       - '[feature] Add default disabled bg color. #896'

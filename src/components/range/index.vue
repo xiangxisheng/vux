@@ -5,10 +5,9 @@
 </template>
 
 <script>
-import Powerange from './powerange'
+import Powerange from './range/lib/powerange'
 
 export default {
-  name: 'range',
   props: {
     decimal: Boolean,
     value: {
@@ -27,7 +26,7 @@ export default {
     },
     step: {
       type: Number,
-      default: 1
+      default: 0
     },
     disabled: Boolean,
     disabledOpacity: Number,
@@ -67,15 +66,10 @@ export default {
       const handleTop = (this.rangeHandleHeight - this.rangeBarHeight) / 2
       this.$el.querySelector('.range-handle').style.top = `-${handleTop}px`
       this.$el.querySelector('.range-bar').style.height = `${this.rangeBarHeight}px`
-      this.handleOrientationchange = () => {
-        this.update()
-      }
-      window.addEventListener('orientationchange', this.handleOrientationchange, false)
     })
   },
   methods: {
     update () {
-      console.log('update', this.currentValue)
       let value = this.currentValue
       if (value < this.min) {
         value = this.min
@@ -83,15 +77,9 @@ export default {
       if (value > this.max) {
         value = this.max
       }
-      this.range.reInit({
-        min: this.min,
-        max: this.max,
-        step: this.step,
-        value
-      })
+      this.range.reInit({min: this.min, max: this.max, value: value})
       this.currentValue = value
       this.range.setStart(this.currentValue)
-      this.range.setStep()
     }
   },
   data () {
@@ -103,7 +91,6 @@ export default {
     currentValue (val) {
       this.range && this.range.setStart(val)
       this.$emit('input', val)
-      this.$emit('on-change', val)
     },
     value (val) {
       this.currentValue = val
@@ -111,15 +98,9 @@ export default {
     min () {
       this.update()
     },
-    step () {
-      this.update()
-    },
     max () {
       this.update()
     }
-  },
-  beforeDestroy () {
-    window.removeEventListener('orientationchange', this.handleOrientationchange, false)
   }
 }
 </script>

@@ -1,15 +1,6 @@
 <template>
-  <div
-    class="vux-tab-item"
-    :class="[currentSelected ? activeClass : '', {'vux-tab-selected': currentSelected, 'vux-tab-disabled': disabled}]"
-    :style="style"
-    @click="onItemClick">
+  <div class="vux-tab-item" :class="[currentSelected ? activeClass : '', {'vux-tab-selected': currentSelected, 'vux-tab-disabled': disabled}]" :style="style" @click="onItemClick">
     <slot></slot>
-    <span
-      :style="{background: badgeBackground, color: badgeColor}"
-      class="vux-tab-item-badge"
-      v-if="typeof badgeLabel !== 'undefined' && badgeLabel !== ''">
-    {{ badgeLabel }}</span>
   </div>
 </template>
 
@@ -17,20 +8,10 @@
 import { childMixin } from '../../mixins/multi-items'
 
 export default {
-  name: 'tab-item',
   mixins: [childMixin],
   props: {
     activeClass: String,
-    disabled: Boolean,
-    badgeBackground: {
-      type: String,
-      default: '#f74c31'
-    },
-    badgeColor: {
-      type: String,
-      default: '#fff'
-    },
-    badgeLabel: String
+    disabled: Boolean
   },
   computed: {
     style () {

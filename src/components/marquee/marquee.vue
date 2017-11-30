@@ -8,7 +8,6 @@
 
 <script>
 export default {
-  name: 'marquee',
   props: {
     interval: {
       type: Number,
@@ -21,8 +20,7 @@ export default {
     direction: {
       type: String,
       default: 'up'
-    },
-    itemHeight: Number
+    }
   },
   beforeDestroy () {
     this.destroy()
@@ -53,7 +51,7 @@ export default {
         return false
       }
       this.length = this.$refs.box.children.length
-      this.height = this.itemHeight || firstItem.offsetHeight
+      this.height = firstItem.offsetHeight
 
       if (this.direction === 'up') {
         this.cloneNode = firstItem.cloneNode(true)

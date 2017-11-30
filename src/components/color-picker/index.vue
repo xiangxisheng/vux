@@ -20,7 +20,6 @@ const sizeMap = {
   'small': 20
 }
 export default {
-  name: 'color-picker',
   components: {
     Icon,
     Flexbox,

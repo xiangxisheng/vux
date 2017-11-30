@@ -12,13 +12,8 @@ export default {
     this.handleChangeEvent = false
   },
   computed: {
-    dirty: {
-      get: function () {
-        return !this.pristine
-      },
-      set: function (newValue) {
-        this.pristine = !newValue
-      }
+    dirty () {
+      return !this.prisine
     },
     invalid () {
       return !this.valid
@@ -31,8 +26,8 @@ export default {
   },
   watch: {
     value (newVal) {
-      if (this.pristine === true) {
-        this.pristine = false
+      if (this.prisine === true) {
+        this.prisine = false
       }
       if (!this.handleChangeEvent) {
         this.$emit('on-change', newVal)
@@ -43,7 +38,7 @@ export default {
   data () {
     return {
       errors: {},
-      pristine: true,
+      prisine: true,
       touched: false
     }
   }

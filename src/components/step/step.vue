@@ -6,7 +6,6 @@
 
 <script>
 export default {
-  name: 'step',
   props: {
     value: Number,
     backgroundColor: {

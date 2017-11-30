@@ -6,7 +6,6 @@
 
 <script>
 export default {
-  name: 'checker',
   props: {
     defaultItemClass: String,
     selectedItemClass: String,
@@ -16,16 +15,15 @@ export default {
       default: 'radio'
     },
     value: [String, Number, Array, Object],
-    max: Number,
-    radioRequired: Boolean
+    max: Number
   },
   watch: {
     value (newValue) {
       this.currentValue = newValue
+      this.$emit('on-change', newValue)
     },
     currentValue (val) {
       this.$emit('input', val)
-      this.$emit('on-change', val)
     }
   },
   data () {

@@ -33,8 +33,7 @@ const webpackConfig = {
       'vue$': 'vue/dist/vue.common.js',
       'src': resolve('src'),
       'assets': resolve('src/assets'),
-      'components': resolve('src/components'),
-      '@': resolve('src')
+      'components': resolve('src/components')
     }
   },
   module: {
@@ -44,7 +43,6 @@ const webpackConfig = {
         loader: 'eslint-loader',
         enforce: "pre",
         include: [resolve('src'), resolve('test')],
-        exclude: /vue.vux.js$/,
         options: {
           formatter: require('eslint-friendly-formatter')
         }

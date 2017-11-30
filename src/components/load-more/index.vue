@@ -7,7 +7,6 @@
 
 <script>
 export default {
-  name: 'load-more',
   props: {
     showLoading: {
       type: Boolean,

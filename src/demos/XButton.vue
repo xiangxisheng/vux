@@ -1,22 +1,10 @@
 <template>
   <div>
-    <divider>iOS Gradients(v2.7.4)</divider>
-    <box gap="10px 10px">
-      <x-button :gradients="['#1D62F0', '#19D5FD']">iOS Gradients</x-button>
-      <x-button :gradients="['#A644FF', '#FC5BC4']">iOS Gradients</x-button>
-      <x-button :gradients="['#FF2719', '#FF61AD']">iOS Gradients</x-button>
-      <x-button :gradients="['#6F1BFE', '#9479DF']">iOS Gradients</x-button>
-      <x-button :gradients="['#FF5E3A', '#FF9500']">iOS Gradients</x-button>
-    </box>
     <divider>default</divider>
     <box gap="10px 10px">
       <x-button>submit</x-button>
       <x-button type="primary">primary</x-button>
       <x-button type="warn">Delete</x-button>
-
-      <divider>link</divider>
-      <x-button type="primary" link="/demo">Go to demo list</x-button>
-      <x-button type="default" link="BACK">Back</x-button>
 
       <divider>action type</divider>
       <x-button type="primary" action-type="button">submit</x-button>

@@ -1,61 +1,26 @@
 <template>
-  <div
-    class="vux-search-box"
-    :class="{ 'vux-search-fixed':isFixed }"
-    :style="{ top: isFixed ? top : '', position: fixPosition }">
-    <div
-      class="weui-search-bar"
-      :class="{'weui-search-bar_focusing': !isCancel || currentValue}">
-      <slot name="left"></slot>
-      <form class="weui-search-bar__form" @submit.prevent="$emit('on-submit', value)" action=".">
-        <label
-          :for="`search_input_${uuid}`"
-          class="vux-search-mask"
-          @click="touch"
-          v-show="!isFixed && autoFixed"></label>
+  <div class="vux-search-box" :class="{'vux-search-fixed':isFixed}" :style="{top: isFixed ? top : '', position: fixPosition }">
+    <div class="weui-search-bar" :class="{'weui-search-bar_focusing': !isCancel || currentValue}">
+      <form class="weui-search-bar__form" @submit.prevent="$emit('on-submit', value)">
+        <div class="vux-search-mask" @click="touch" v-show="!isFixed && autoFixed"></div>
         <div class="weui-search-bar__box">
           <i class="weui-icon-search"></i>
-          <input
-            v-model="currentValue"
-            ref="input"
-            type="search"
-            autocomplete="off"
-            class="weui-search-bar__input"
-            :id="`search_input_${uuid}`"
-            :placeholder="placeholder"
-            :required="required"
-            @focus="onFocus"
-            @blur="onBlur"
-            @compositionstart="onComposition($event, 'start')"
-            @compositionend="onComposition($event, 'end')"
-            @input="onComposition($event, 'input')"/>
-          <a
-            href="javascript:"
-            class="weui-icon-clear"
-            @click="clear"
-            v-show="currentValue"></a>
+          <input type="search" class="weui-search-bar__input" :id="`search_input_${uuid}`" :placeholder="placeholder" autocomplete="off" :required="required" v-model="currentValue" ref="input"
+          @focus="onFocus"
+          @blur="onBlur"/>
+          <a href="javascript:" class="weui-icon-clear" @click="clear" v-show="currentValue"></a>
         </div>
-        <label
-          :for="`search_input_${uuid}`"
-          class="weui-search-bar__label"
-          v-show="!isFocus && !value">
+        <label :for="`search_input_${uuid}`" class="weui-search-bar__label" v-show="!isFocus && !value">
           <i class="weui-icon-search"></i>
-          <span>{{ placeholder || $t('placeholder') }}</span>
+          <span>{{placeholder || $t('placeholder')}}</span>
         </label>
       </form>
-      <a
-        href="javascript:"
-        class="weui-search-bar__cancel-btn"
-        @click="cancel">{{ cancelText || $t('cancel_text') }}
-      </a>
+      <a href="javascript:" class="weui-search-bar__cancel-btn" @click="cancel">{{cancelText || $t('cancel_text')}}</a>
       <slot name="right"></slot>
     </div>
     <div class="weui-cells vux-search_show" v-show="isFixed">
       <slot></slot>
-      <div
-        class="weui-cell weui-cell_access"
-        v-for="item in results"
-        @click="handleResultClick(item)">
+      <div class="weui-cell weui-cell_access" v-for="item in results" @click="handleResultClick(item)" v-on:touchmove.prevent>
         <div class="weui-cell__bd weui-cell_primary">
           <p>{{item.title}}</p>
         </div>
@@ -77,7 +42,6 @@ placeholder:
 import uuidMixin from '../../mixins/uuid'
 
 export default {
-  name: 'search',
   mixins: [uuidMixin],
   props: {
     required: {
@@ -124,26 +88,6 @@ export default {
     }
   },
   methods: {
-    emitEvent () {
-      this.$nextTick(() => {
-        this.$emit('input', this.currentValue)
-        this.$emit('on-change', this.currentValue)
-      })
-    },
-    onComposition ($event, type) {
-      if (type === 'start') {
-        this.onInput = true
-      }
-      if (type === 'end') {
-        this.onInput = false
-        this.emitEvent()
-      }
-      if (type === 'input') {
-        if (!this.onInput) {
-          this.emitEvent()
-        }
-      }
-    },
     clear () {
       this.currentValue = ''
       this.isFocus = true
@@ -174,9 +118,6 @@ export default {
     setFocus () {
       this.$refs.input.focus()
     },
-    setBlur () {
-      this.$refs.input.blur()
-    },
     onFocus () {
       this.isFocus = true
       this.$emit('on-focus')
@@ -184,12 +125,10 @@ export default {
     },
     onBlur () {
       this.isFocus = false
-      this.$emit('on-blur')
     }
   },
   data () {
     return {
-      onInput: false,
       currentValue: '',
       isCancel: true,
       isFocus: false,
@@ -211,6 +150,12 @@ export default {
     },
     value (val) {
       this.currentValue = val
+    },
+    currentValue (val) {
+      if (!this.isCancel) {
+        this.$emit('on-change', val)
+        this.$emit('input', val)
+      }
     }
   }
 }
@@ -236,21 +181,6 @@ export default {
 .weui-cells.vux-search_show {
   margin-top: 0!important;
   overflow-y: auto;
-  position: fixed;
-  width: 100%;
-  max-height: 100%;
-
-  .weui-cell:last-child {
-    margin-bottom: 150px;
-  }
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
-
-  &::after {
-    display: none;
-  }
 }
 .vux-search-mask {
   position: absolute;

@@ -5,7 +5,6 @@ const isIpad = /(iPad).*OS\s([\d_]+)/.test(ua)
 const isIpod = /(iPod)(.*OS\s([\d_]+))?/.test(ua)
 const isIphone = !isIpad && /(iPhone\sOS)\s([\d_]+)/.test(ua)
 const isWechat = /micromessenger/i.test(ua)
-const isAlipay = /alipayclient/i.test(ua)
 
 const plugin = function (Vue) {
   // Vue.$device will be removed
@@ -15,8 +14,7 @@ const plugin = function (Vue) {
       isIpad,
       isIpod,
       isIphone,
-      isWechat,
-      isAlipay
+      isWechat
     }
   }
   Vue.mixin({
@@ -26,8 +24,7 @@ const plugin = function (Vue) {
         isIpad,
         isIpod,
         isIphone,
-        isWechat,
-        isAlipay
+        isWechat
       }
     }
   })

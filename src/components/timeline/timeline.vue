@@ -8,7 +8,6 @@
 
 <script>
 export default {
-  name: 'timeline',
   props: {
     color: String,
     isShowIcon: {

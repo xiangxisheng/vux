@@ -1,10 +1,6 @@
 <template>
-  <div
-  class="vux-cell-box weui-cell"
-  :class="className"
-  :style="style"
-  @click="onClick">
-    <slot></slot>
+  <div class="vux-cell-box weui-cell" :class="{'vux-tap-active': isLink || !!link, 'weui-cell_access': isLink || !!link}" @click="onClick">
+    <div><slot></slot></div>
   </div>
 </template>
 
@@ -12,32 +8,9 @@
 import { go } from '../../libs/router'
 
 export default {
-  name: 'cell-box',
   props: {
     isLink: Boolean,
-    link: [String, Object],
-    borderIntent: {
-      type: Boolean,
-      default: true
-    },
-    noFlex: Boolean,
-    alignItems: String
-  },
-  computed: {
-    style () {
-      if (this.alignItems) {
-        return {
-          'align-items': this.alignItems
-        }
-      }
-    },
-    className () {
-      return {
-        'vux-tap-active': this.isLink || !!this.link,
-        'weui-cell_access': this.isLink || !!this.link,
-        'vux-cell-no-border-intent': !this.borderIntent
-      }
-    }
+    link: [String, Object]
   },
   methods: {
     onClick () {
@@ -53,10 +26,10 @@ export default {
 @import '../../styles/weui/base/mixin/setArrow.less';
 @import '../../styles/weui/widget/weui_cell/weui_cell_global';
 
+.vux-cell-box > div {
+  padding-right: 13px;
+}
 .vux-cell-primary {
   flex: 1;
-}
-.weui-cell.vux-cell-no-border-intent:before {
-  left: 0;
 }
 </style>

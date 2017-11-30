@@ -58,6 +58,15 @@ self.$config = {
         
       },
       {
+        title: '捐赠 & Vux Pro',
+        path: '/zh-CN/pro'
+      },
+      {
+        title: 'Ad: 世界和我',
+        className: 'vux-livingearth-nav',
+        path: '/zh-CN/livingearth?x-block=top-nav'
+      },
+      {
         title: 'Languages',
         type: 'dropdown',
         items: langs
@@ -95,6 +104,10 @@ self.$config = {
       {
         title: 'upgrade to v2.x',
         path: '/en/upgrade-to-2'
+      },
+      {
+        title: 'Donate & Vux Pro',
+        path: '/en/pro'
       },
       {
         title: 'Languages',

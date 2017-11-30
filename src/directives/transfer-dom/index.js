@@ -1,6 +1,6 @@
 // Thanks to: https://github.com/calebroseland/vue-dom-portal
 
-const objectAssign = require('object-assign')
+import objectAssign from 'object-assign'
 /**
  * Get target DOM Node
  * @param {(Node|string|Boolean)} [node=document.body] DOM Node, CSS selector, or Boolean
@@ -8,41 +8,14 @@ const objectAssign = require('object-assign')
  */
 function getTarget (node) {
   if (node === void 0) {
-    return document.body
+    node = document.body
   }
-
-  if (typeof node === 'string' && node.indexOf('?') === 0) {
-    return document.body
-  } else if (typeof node === 'string' && node.indexOf('?') > 0) {
-    node = node.split('?')[0]
-  }
-
-  if (node === 'body' || node === true) {
-    return document.body
-  }
-
+  if (node === true) { return document.body }
   return node instanceof window.Node ? node : document.querySelector(node)
-}
-
-function getShouldUpdate (node) {
-  // do not updated by default
-  if (!node) {
-    return false
-  }
-  if (typeof node === 'string' && node.indexOf('?') > 0) {
-    try {
-      const config = JSON.parse(node.split('?')[1])
-      return config.autoUpdate || false
-    } catch (e) {
-      return false
-    }
-  }
-  return false
 }
 
 const directive = {
   inserted (el, { value }, vnode) {
-    el.className = el.className ? el.className + ' v-transfer-dom' : 'v-transfer-dom'
     const parentNode = el.parentNode
     var home = document.createComment('')
     var hasMovedOut = false
@@ -62,10 +35,6 @@ const directive = {
     }
   },
   componentUpdated (el, { value }) {
-    const shouldUpdate = getShouldUpdate(value)
-    if (!shouldUpdate) {
-      return
-    }
     // need to make sure children are done updating (vs. `update`)
     var ref$1 = el.__transferDomData
     // homes.get(el)
@@ -89,12 +58,11 @@ const directive = {
     }
   },
   unbind: function unbind (el, binding) {
-    el.className = el.className.replace('v-transfer-dom', '')
-    if (el.__transferDomData && el.__transferDomData.hasMovedOut === true) {
+    if (el.__transferDomData.hasMovedOut === true) {
       el.__transferDomData.parentNode && el.__transferDomData.parentNode.appendChild(el)
     }
     el.__transferDomData = null
   }
 }
 
-module.exports = directive
+export default directive

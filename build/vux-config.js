@@ -15,15 +15,7 @@ module.exports = {
     env: 'dev'
   },
   plugins: [
-    'vux-ui', 'inline-manifest',
-    {
-      name: 'duplicate-style',
-      envs: ['production']
-    },
-    {
-      name: 'progress-bar',
-      envs: ['development']
-    },
+    'vux-ui', 'inline-manifest', 'progress-bar',
     {
       name: 'js-parser',
       test: /main\.js/,
@@ -46,20 +38,36 @@ module.exports = {
           }
           str.push(`{
   path: '${path}',
-  component: () => import('./demos/${filename}.vue').then(m => m.default)
+  component: function (resolve) {
+    require(['./demos/${filename}.vue'], resolve)
+  }
 }`)
         })
+
+         if (argv.platform === 'app') {
+           str.push(`{
+  path: '/test/app',
+  component: function (resolve) {
+    require(['./demos/AppTest.vue'], resolve)
+  }
+}`)
+        }
 
         // 404 page
         str.push(`{
   path: '*',
-  component: () => import('./demos/NotFoundComponent.vue').then(m => m.default)
+  component: function (resolve) {
+    require(['./demos/NotFoundComponent.vue'], resolve)
+  }
 }`)
 
         str = `[${str.join(',\n')}]`
         source = source.replace('const routes = []', 'const routes = ' + str)
         return source
       }
+    },
+    {
+      name: 'duplicate-style'
     },
     {
       name: 'i18n',

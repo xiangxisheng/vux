@@ -13,7 +13,6 @@
 import Base from '../../libs/base'
 
 export default {
-  name: 'x-progress',
   mixins: [Base],
   props: {
     percent: {

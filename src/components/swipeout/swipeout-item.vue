@@ -44,11 +44,6 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
-      this.render()
-    })
-  },
-  methods: {
-    render () {
       this.target = this.$refs.content
       if (this.$slots['left-menu']) {
         this.hasLeftMenu = true
@@ -58,7 +53,9 @@ export default {
         this.hasRightMenu = true
         this.caculateMenuWidth('right')
       }
-    },
+    })
+  },
+  methods: {
     caculateMenuWidth (direction) {
       const list = this.$slots[`${direction}-menu`][0].children.filter(one => one.tag)
       let width = 0

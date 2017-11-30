@@ -8,22 +8,7 @@
 <script>
 import Clocker from './clocker'
 
-let format = '%D 天 %H 小时 %M 分 %S 秒'
-
-if (typeof V_LOCALE === 'undefined') {
-  if (process.env.NODE_ENV === 'development') {
-    console.warn('[VUX warn] 抱歉，clocker 组件需要升级 vux-loader 到最新版本才能正常使用')
-  }
-} else {
-  if (V_LOCALE === 'en') { // eslint-disable-line
-    format = '%D d %H h %M m %S s'
-  } else if (V_LOCALE === 'zh-CN') { // eslint-disable-line
-    format = '%D 天 %H 小时 %M 分 %S 秒'
-  }
-}
-
 export default {
-  name: 'clocker',
   mounted () {
     this.$nextTick(() => {
       this.slot = this.$el.querySelector('.vux-clocker-tpl')
@@ -63,7 +48,7 @@ export default {
     time: [String, Number],
     format: {
       type: String,
-      default: format
+      default: '%D 天 %H 小时 %M 分 %S 秒'
     }
   },
   watch: {

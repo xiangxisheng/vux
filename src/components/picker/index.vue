@@ -1,8 +1,8 @@
 <template>
   <div class="vux-picker">
     <flexbox :gutter="0">
-      <flexbox-item :span="columnWidth && columnWidth[index]" v-for="(one, index) in currentData" :key="index" style="margin-left:0;">
-        <div class="vux-picker-item" :id="`vux-picker-${uuid}-${index}`"></div>
+      <flexbox-item v-for="(one, index) in currentData" :key="index" style="margin-left:0;">
+        <div class="vux-picker-item" :id="'vux-picker-' + uuid + '-' + index"></div>
       </flexbox-item>
     </flexbox>
   </div>
@@ -12,11 +12,8 @@
 import Scroller from './scroller'
 import { Flexbox, FlexboxItem } from '../flexbox'
 import Manager from './chain'
-import value2name from '../../filters/value2name'
-import isArray from '../../libs/is-array'
 
 export default {
-  name: 'picker',
   components: {
     Flexbox,
     FlexboxItem
@@ -29,13 +26,12 @@ export default {
     }
   },
   mounted () {
-    this.uuid = Math.random().toString(36).substring(3, 8)
     this.$nextTick(() => {
       this.render(this.currentData, this.currentValue)
     })
   },
   props: {
-    data: Array,
+    data: [Array],
     columns: {
       type: Number,
       default: 0
@@ -48,13 +44,9 @@ export default {
     itemClass: {
       type: String,
       default: 'scroller-item'
-    },
-    columnWidth: Array
+    }
   },
   methods: {
-    getNameValues () {
-      return value2name(this.currentValue, this.data)
-    },
     getId (i) {
       return `#vux-picker-${this.uuid}-${i}`
     },
@@ -68,14 +60,6 @@ export default {
       // set first item as value
       if (value.length < count) {
         for (let i = 0; i < count; i++) {
-          if (process.env.NODE_ENV === 'development' &&
-            typeof data[i][0] === 'undefined' &&
-            isArray(this.data) &&
-            this.data[0] &&
-            typeof this.data[0].value !== 'undefined' &&
-            !this.columns) {
-            console.error('[VUX error] 渲染出错，如果为联动模式，需要指定 columns(列数)')
-          }
           this.$set(_this.currentValue, i, data[i][0].value || data[i][0])
         }
       }
@@ -96,9 +80,7 @@ export default {
           onSelect (value) {
             _this.$set(_this.currentValue, i, value)
             if (!this.columns || (this.columns && _this.getValue().length === _this.store.count)) {
-              _this.$nextTick(() => {
-                _this.$emit('on-change', _this.getValue())
-              })
+              _this.$emit('on-change', _this.getValue())
             }
             if (_this.columns !== 0) {
               _this.renderChain(i + 1)
@@ -130,9 +112,7 @@ export default {
         itemClass: _this.item_class,
         onSelect (value) {
           _this.$set(_this.currentValue, i, value)
-          _this.$nextTick(() => {
-            _this.$emit('on-change', _this.getValue())
-          })
+          _this.$emit('on-change', _this.getValue())
           _this.renderChain(i + 1)
         }
       })
@@ -160,7 +140,7 @@ export default {
     return {
       scroller: [],
       count: 0,
-      uuid: '',
+      uuid: Math.random().toString(36).substring(3, 8),
       currentData: this.data,
       currentValue: this.value
     }
@@ -184,14 +164,10 @@ export default {
           }
         }
       } else {
-        if (val.length) {
-          for (let i = 0; i < val.length; i++) {
-            if (this.scroller[i] && this.scroller[i].value !== val[i]) {
-              this.scroller[i].select(val[i])
-            }
+        for (let i = 0; i < val.length; i++) {
+          if (this.scroller[i] && this.scroller[i].value !== val[i]) {
+            this.scroller[i].select(val[i])
           }
-        } else {
-          this.render(this.currentData, [])
         }
       }
     },
@@ -229,7 +205,7 @@ export default {
   },
   beforeDestroy () {
     for (let i = 0; i < this.count; i++) {
-      this.scroller[i] && this.scroller[i].destroy()
+      this.scroller[i].destroy()
       this.scroller[i] = null
     }
   }

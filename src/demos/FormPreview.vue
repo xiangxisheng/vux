@@ -2,7 +2,7 @@
   <div>
     <form-preview :header-label="$t('付款金额')" header-value="¥2400.00" :body-items="list" :footer-buttons="buttons1"></form-preview>
     <br>
-    <form-preview :header-label="$t('付款金额')" header-value="¥2400.00" :body-items="list" :footer-buttons="buttons2" name="demo"></form-preview>
+    <form-preview :header-label="$t('付款金额')" header-value="¥2400.00" :body-items="list" :footer-buttons="buttons2"></form-preview>
     <br>
     <form-preview :header-label="$t('付款金额')" header-value="¥2400.00" :body-items="list"></form-preview>
   </div>
@@ -25,10 +25,6 @@
   en: Info
 操作:
   en: Action
-点击事件:
-  en: Click Event
-跳转到首页:
-  en: Homepage
 </i18n>
 
 <script>
@@ -55,12 +51,12 @@ export default {
         text: '辅助操作'
       }, {
         style: 'primary',
-        text: this.$t('跳转到首页'),
+        text: '跳转到首页',
         link: '/'
       }],
       buttons2: [{
         style: 'primary',
-        text: this.$t('点击事件'),
+        text: '点击事件',
         onButtonClick: (name) => {
           alert(`clicking ${name}`)
         }

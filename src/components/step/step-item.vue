@@ -20,7 +20,6 @@
 import Icon from '../icon'
 
 export default {
-  name: 'step-item',
   props: {
     title: String,
     description: String,

@@ -16,7 +16,6 @@ import { childMixin } from '../../mixins/multi-items'
 import Badge from '../badge'
 
 export default {
-  name: 'tabbar-item',
   components: {
     Badge
   },
