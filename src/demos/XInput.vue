@@ -14,6 +14,12 @@
       <x-input title="必须输入2333" :is-type="be2333" placeholder="I'm placeholder"></x-input>
     </group>
 
+    <group title="mask">
+      <x-input title="手机号码格式化" mask="999 9999 9999" v-model="maskValue" :max="13" is-type="china-mobile"></x-input>
+      <cell title="value" :value="maskValue"></cell>
+      <x-input title="(99) 9-99" mask="(99) 9-99" v-model="maskValue2" :max="9"></x-input>
+    </group>
+
     <group title="使用icon代替title">
       <x-input title="必须输入2333" :is-type="be2333" placeholder="I'm placeholder">
         <img slot="label" style="padding-right:10px;display:block;" src="http://dn-placeholder.qbox.me/110x110/FF2D55/000" width="24" height="24">
@@ -38,11 +44,13 @@
 
 
     <group title="html title">
-      <x-input :title='`<span style="${style}">hello</span>`' placeholder="I'm placeholder"></x-input>
+      <x-input label-width="4em" :title='`<span style="${style}">hello</span>`' placeholder="I'm placeholder"></x-input>
     </group>
-    <x-button @click.native="style = 'color:red;'">set red</x-button>
-    <x-button @click.native="style = 'color:green'">set green</x-button>
-    <x-button @click.native="style = 'color:#000'">set default</x-button>
+    <div style="padding:15px;">
+      <x-button @click.native="style = 'color:red;'" type="primary">set red</x-button>
+      <x-button @click.native="style = 'color:green'" type="primary">set green</x-button>
+      <x-button @click.native="style = 'color:#000'" type="primary">set default</x-button>
+    </div>
 
     <group title="Default">
       <x-input title="message" placeholder="I'm placeholder"></x-input>
@@ -77,9 +85,14 @@
       <x-input title="请确认6位数字" v-model="password2" type="text" placeholder="" :equal-with="password"></x-input>
     </group>
 
+    <group title="enter事件">
+      <x-input title="输入完成后回车" type="text" placeholder="" v-model="enterText"
+        @on-enter="onEnter"></x-input>
+    </group>
+
     <group title="验证码" class="weui-cells_form">
       <x-input title="验证码" class="weui-cell_vcode">
-        <img slot="right" class="weui-vcode-img" src="http://weui.github.io/weui/images/vcode.jpg">
+        <img slot="right" class="weui-vcode-img" src="https://i.loli.net/2017/09/18/59bf7f32425d5.jpg">
       </x-input>
       <x-input title="发送验证码" class="weui-vcode">
         <x-button slot="right" type="primary" mini>发送验证码</x-button>
@@ -113,6 +126,7 @@ export default {
     return {
       password: '123465',
       password2: '',
+      enterText: '',
       valid1: false,
       valid2: false,
       iconType: '',
@@ -125,7 +139,9 @@ export default {
       style: '',
       disabledValue: 'hello',
       debounceValue: '',
-      maxValue: ''
+      maxValue: '',
+      maskValue: '13545678910',
+      maskValue2: ''
     }
   },
   methods: {
@@ -136,13 +152,16 @@ export default {
       this.valid2 = this.$refs.input02.valid
     },
     change (val) {
-      console.log(val)
+      console.log('on change', val)
     },
     onBlur (val) {
       console.log('on blur', val)
     },
-    onFocus (val) {
-      console.log('on focus', val)
+    onFocus (val, $event) {
+      console.log('on focus', val, $event)
+    },
+    onEnter (val) {
+      console.log('click enter!', val)
     }
   }
 }

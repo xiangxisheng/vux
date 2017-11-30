@@ -54,13 +54,26 @@ extra:
       <x-dialog></x-dialog>
     </div>
     ```
+    <p class="warning">
+    `scroll` 属性已经在 v2.5.12 废弃，因为它并没有实现阻止 body 滚动。
+    <br>
+    如果你是 `100%` 布局，按照下面配置布局可以实现阻止滚动。
+    </p>
+
+    ``` js
+    import { ConfigPlugin } from 'vux'
+
+    Vue.use(ConfigPlugin, {
+      $layout: 'VIEW_BOX'
+    })
+    ```
 
 props:
-  value:
+  show:
     type: Boolean
     default: false
-    en: 'visibility of the dialog, use `v-model` for binding'
-    zh-CN: '弹窗是否可见，使用`v-model`绑定'
+    en: 'visibility of the dialog, supports the .sync modifier'
+    zh-CN: '弹窗是否可见，使用 `v-model` 绑定，在 v2.5.3 之后版本支持.sync修饰符'
   mask-transition:
     default: vux-mask
     en: transition of mask
@@ -76,21 +89,73 @@ props:
     zh-CN: 是否在点击遮罩时自动关闭弹窗
   scroll:
     type: Boolean
+    deprecated: true
     default: true
-    en: if body content can scroll when scrolling on dialog
-    zh-CN: 是否在弱窗上滚动时 body 内容也滚动
+    en: '[deprecated]if body content can scroll when scrolling on dialog'
+    zh-CN: '【废弃】是否在弹窗上滚动时 body 内容也滚动'
+  dialog-style:
+    version: v2.2.2
+    type: Object
+    en: set dialog styles, you can use it for overwritting default width and background style
+    zh-CN: 设置内部弹窗样式，覆盖原有的宽度、背景颜色等样式
+  mask-z-index:
+    version: v2.6.4
+    type: Number, String
+    default: 1000
+    en: zIndex of mask
+    zh-CN: 遮罩层 z-index 值
 events:
   on-show:
     en: emits when opening dialog
     zh-CN: 弹窗可见时触发
   on-hide:
     en: emits when closing dialog
-    zh-CN: 弹窖关闭时触发
+    zh-CN: 弹窗关闭时触发
 slots:
   default:
     en: main content of the dialog
     zh-CN: 弹窗的主体内容
 changes:
+  v2.7.4:
+    en:
+      - '[fix] fix position:absolute issue #2220'
+    zh-CN:
+      - '[fix] 修复定位为 absolute 导致的定位问题 #2220'
+  v2.7.1:
+    en:
+      - '[fix] fix prevent-body-scroll.css not found (less-loader issue) #2118'
+    zh-CN:
+      - '[fix] 修复 prevent-body-scroll.css 无法找到问题(less-loader) #2118'
+  v2.7.0:
+    en:
+      - '[feature] add event:on-click-mask #2102'
+    zh-CN:
+      - '[feature] 添加事件 on-click-mask #2102'
+  v2.6.4:
+    en:
+      - '[feature] support prop:mask-z-index'
+    zh-CN:
+      - '[feature] 支持属性 mask-z-index 设置遮罩 z-index'
+  v2.6.0:
+    en:
+      - '[fix] fix body still scrolls when scrolling on dialog'
+    zh-CN:
+      - '[fix] 修复弹窗滑动时 body 区域依然会滚动的问题'
+  v2.5.12:
+    en:
+      - '[change] prop:scroll is deprecated #1858 #1877'
+    zh-CN:
+      - '[change] 属性 scroll 已经废弃，仅对配置为 100% 布局的情况实现阻止滚动 #1858 #1877'
+  v2.5.3:
+    en:
+      - '[feature] Add prop:show, supports the .sync modifier'
+    zh-CN:
+      - '[feature] 新增 prop:show 并且支持.sync修饰符'
+  v2.2.2:
+    en:
+      - '[feature] Support prop:dialog-style #1282'
+    zh-CN:
+      - '[feature] 支持 prop:dialog-style 覆写原有弹窗容器样式 #1282'
   v2.1.1-rc.14:
     en:
       - '[fix] Fix cannot set value to true initially #1138'

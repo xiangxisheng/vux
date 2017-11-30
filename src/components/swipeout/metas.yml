@@ -67,6 +67,11 @@ swipeout-item:
     on-close:
       zh-CN: 菜单完全关闭时触发
 changes:
+  v2.5.5:
+    en:
+      - '[enhance] swipeout-item add render method #1688'
+    zh-CN:
+      - '[enhance] swipeout-item 新增 render 方法 #1688'
   v2.1.1-rc.9:
     en:
       - '[fix] Fix left-menu is shown when swiping right quickly'
@@ -85,7 +90,7 @@ changes:
       - '[fix] Fix left-menu is shown when sliding back and forth #1139'
     zh-CN:
       - '[fix] 修复来回滑动时左侧菜单可能会被滑出 #1139'
-  next:
+  v2.2.0:
     en:
       - '[fix] Fix cannot scroll when disabled'
       - '[fix] Fix unable to trigger click event when disabled on android'

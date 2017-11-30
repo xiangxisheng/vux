@@ -27,12 +27,7 @@
     <group :title="$t('fillable = true')">
       <x-number :value="10" :title="$t('Quantity')" fillable></x-number>
     </group>
-    
-    <group :title="$t('use with other group elements')">
-      <x-number :title="$t('Quantity')" :min="-5" :max="8" :value="1" type="inline"></x-number>
-      <x-number :title="$t('Quantity')" :min="-5" :max="8" :value="1" type="inline"></x-number>
-      <x-switch :title="$t('Switch Component')" :value.sync="true"></x-switch>
-    </group>
+
   </div>
 </template>
 
@@ -61,13 +56,14 @@ round style:
 </i18n>
 
 <script>
-import { Group, XNumber, XSwitch } from 'vux'
+import { Group, XNumber, XSwitch, Divider } from 'vux'
 
 export default {
   components: {
     XNumber,
     Group,
-    XSwitch
+    XSwitch,
+    Divider
   },
   data () {
     return {

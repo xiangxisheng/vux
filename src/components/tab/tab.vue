@@ -11,6 +11,7 @@
 import { parentMixin } from '../../mixins/multi-items'
 
 export default {
+  name: 'tab',
   mixins: [parentMixin],
   mounted () {
     // stop bar anmination on first loading
@@ -33,7 +34,8 @@ export default {
       type: Boolean,
       default: true
     },
-    customBarWidth: [Function, String]
+    customBarWidth: [Function, String],
+    preventDefault: Boolean
   },
   computed: {
     barLeft () {
@@ -165,5 +167,22 @@ export default {
   margin: auto;
   height: 100%;
   transition: width 0.3s @easing-in-out;
+}
+
+.vux-tab-item-badge {
+  position: absolute;
+  top:0;
+  bottom:0;
+  box-sizing: border-box;
+  display: inline-block;
+  height: 18px;
+  min-width: 18px;
+  padding: 0 4px;
+  border-radius: 30px;
+  margin: auto 0 auto 4px;
+  line-height: 18px;
+  font-size: 11px;
+  background-clip: padding-box;
+  vertical-align: middle;
 }
 </style>

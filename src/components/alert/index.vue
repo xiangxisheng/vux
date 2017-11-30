@@ -4,13 +4,17 @@
     v-model="showValue"
     :mask-transition="maskTransition"
     :dialog-transition="dialogTransition"
+    :hide-on-blur="hideOnBlur"
+    :mask-z-index="maskZIndex"
     @on-hide="$emit('on-hide')"
     @on-show="$emit('on-show')">
       <div class="weui-dialog__hd">
         <strong class="weui-dialog__title">{{title}}</strong>
       </div>
       <div class="weui-dialog__bd">
-        <slot></slot>
+        <slot>
+          <div v-html="content"></div>
+        </slot>
       </div>
       <div class="weui-dialog__ft">
         <a href="javascript:;"
@@ -31,6 +35,7 @@ button_text:
 import XDialog from '../x-dialog'
 
 export default {
+  name: 'alert',
   components: {
     XDialog
   },
@@ -42,7 +47,12 @@ export default {
   props: {
     value: Boolean,
     title: String,
+    content: String,
     buttonText: String,
+    hideOnBlur: {
+      type: Boolean,
+      default: false
+    },
     maskTransition: {
       type: String,
       default: 'vux-mask'
@@ -50,7 +60,8 @@ export default {
     dialogTransition: {
       type: String,
       default: 'vux-dialog'
-    }
+    },
+    maskZIndex: [Number, String]
   },
   data () {
     return {

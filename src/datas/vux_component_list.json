@@ -37,8 +37,16 @@
     "icon": "&#xe62a;"
   },
   {
+    "name": "cell-form-preview",
+    "icon": "&#xe62a;"
+  },
+  {
     "name": "cell",
     "icon": "&#xe62a;"
+  },
+  {
+    "name": "check-icon",
+    "icon": "&#xe619;"
   },
   {
     "name": "checker",
@@ -78,6 +86,10 @@
     "icon": "&#xe60a;"
   },
   {
+    "name": "datetime-view",
+    "icon": "&#xe60a;"
+  },
+  {
     "name": "datetime",
     "icon": "&#xe60a;"
   },
@@ -86,11 +98,24 @@
     "icon": "&#xe65d;"
   },
   {
+    "name": "drawer",
+    "icon": "&#xe62a;"
+  },
+  {
     "name": "flexbox",
     "icon": "&#xe61f;",
     "items": [
       "flexbox",
       "flexbox-item"
+    ]
+  },
+  {
+    "name": "flow",
+    "icon": "&#xe656;",
+    "items": [
+      "flow",
+      "flow-state",
+      "flow-line"
     ]
   },
   {
@@ -116,6 +141,14 @@
   {
     "name": "inline-calendar",
     "icon": "&#xe62b;"
+  },
+  {
+    "name": "inline-loading",
+    "icon": "&#xe610;"
+  },
+  {
+    "name": "inline-x-number",
+    "icon": "&#xe605;"
   },
   {
     "name": "load-more",
@@ -154,8 +187,16 @@
     "icon": "&#xe65f;"
   },
   {
+    "name": "popup-header",
+    "icon": "&#xe654;"
+  },
+  {
     "name": "popup-picker",
     "icon": "&#xe626;"
+  },
+  {
+    "name": "popup-radio",
+    "icon": "&#xe60f;"
   },
   {
     "name": "popup",
@@ -298,6 +339,10 @@
   {
     "name": "x-switch",
     "icon": "&#xe61c;"
+  },
+  {
+    "name": "x-table",
+    "icon": "&#xe66d;"
   },
   {
     "name": "x-textarea",

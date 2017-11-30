@@ -1,10 +1,21 @@
 <template>
   <div>
     <canvas
-  :style="{height: size, width: size}"
-  :height="size"
-  :width="size" v-show="type === 'canvas'" ref="canvas"></canvas>
-    <img :src="imgData" v-if="type === 'img'">
+    :style="{
+      height: `${size}px`,
+      width: `${size}px`
+    }"
+    :height="size"
+    :width="size"
+    v-show="type === 'canvas'"
+    ref="canvas"></canvas>
+    <img
+    :src="imgData"
+    v-if="type === 'img'"
+    :style="{
+      height: `${size}px`,
+      width: `${size}px`
+    }">
   </div>
 </template>
 
@@ -13,11 +24,12 @@ import QRCodeImpl from 'qr.js/lib/QRCode'
 import ErrorCorrectLevel from 'qr.js/lib/ErrorCorrectLevel'
 
 export default {
+  name: 'qrcode',
   props: {
     value: String,
     size: {
       type: Number,
-      default: 80
+      default: 160
     },
     level: {
       type: String,
@@ -65,6 +77,10 @@ export default {
   },
   methods: {
     render () {
+      if (typeof this.value === 'undefined') {
+        return
+      }
+
       const qrcode = new QRCodeImpl(-1, ErrorCorrectLevel[this.level])
       qrcode.addData(this.value)
       qrcode.make()

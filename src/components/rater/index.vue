@@ -2,13 +2,14 @@
   <div class="vux-rater">
     <input v-model="currentValue" style="display:none">
     <a class="vux-rater-box" v-for="i in max" @click="handleClick(i-1)" :class="{'is-active':currentValue > i-1}" :style="{color: colors && colors[i-1] ? colors[i-1] : '#ccc',marginRight:margin+'px',fontSize: fontSize + 'px', width: fontSize + 'px', height: fontSize + 'px', lineHeight: fontSize + 'px'}">
-      <span class="vux-rater-inner">{{star}}<span class="vux-rater-outer" :style="{color: activeColor, width: cutPercent + '%'}" v-if="cutPercent > 0 && cutIndex === i-1">{{star}}</span></span>
+      <span class="vux-rater-inner"><span v-html="star"></span><span class="vux-rater-outer" :style="{color: activeColor, width: cutPercent + '%'}" v-if="cutPercent > 0 && cutIndex === i-1" v-html="star"></span></span>
     </a>
   </div>
 </template>
 
 <script>
 export default {
+  name: 'rater',
   created () {
     this.currentValue = this.value
   },
@@ -44,14 +45,14 @@ export default {
   },
   computed: {
     sliceValue () {
-      const _val = this.currentValue.toString().split('.')
+      const _val = this.currentValue.toFixed(2).split('.')
       return _val.length === 1 ? [_val[0], 0] : _val
     },
     cutIndex () {
       return this.sliceValue[0] * 1
     },
     cutPercent () {
-      return this.sliceValue[1] * 10
+      return this.sliceValue[1] * 1
     }
   },
   methods: {

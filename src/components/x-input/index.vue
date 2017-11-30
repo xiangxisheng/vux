@@ -1,16 +1,17 @@
 <template>
-	<div class="vux-x-input weui-cell" :class="{'weui-cell_warn': !valid}">
+	<div class="vux-x-input weui-cell" :class="{'weui-cell_warn': showWarn}">
     <div class="weui-cell__hd">
       <div :style="labelStyles" v-if="hasRestrictedLabel">
         <slot name="restricted-label"></slot>
       </div>
       <slot name="label">
-        <label class="weui-label" :style="{width: $parent.labelWidth || (labelWidth + 'em'), textAlign: $parent.labelAlign, marginRight: $parent.labelMarginRight}" v-if="title" v-html="title"></label>
+        <label class="weui-label" :class="labelClass" :style="{width: labelWidth || $parent.labelWidth || labelWidthComputed, textAlign: $parent.labelAlign, marginRight: $parent.labelMarginRight}" v-if="title" v-html="title" :for="`vux-x-input-${uuid}`"></label>
         <inline-desc v-if="inlineDesc">{{inlineDesc}}</inline-desc>
       </slot>
     </div>
     <div class="weui-cell__bd weui-cell__primary" :class="placeholderAlign ? `vux-x-input-placeholder-${placeholderAlign}` : ''">
       <input
+      :id="`vux-x-input-${uuid}`"
       v-if="!type || type === 'text'"
       class="weui-input"
       :maxlength="max"
@@ -27,9 +28,11 @@
       :disabled="disabled"
       v-model="currentValue"
       @focus="focusHandler"
-      @blur="blur"
+      @blur="onBlur"
+      @keyup="onKeyUp"
       ref="input"/>
       <input
+      :id="`vux-x-input-${uuid}`"
       v-if="type === 'number'"
       class="weui-input"
       :maxlength="max"
@@ -46,9 +49,11 @@
       :disabled="disabled"
       v-model="currentValue"
       @focus="focusHandler"
-      @blur="blur"
+      @blur="onBlur"
+      @keyup="onKeyUp"
       ref="input"/>
       <input
+      :id="`vux-x-input-${uuid}`"
       v-if="type === 'email'"
       class="weui-input"
       :maxlength="max"
@@ -65,9 +70,11 @@
       :disabled="disabled"
       v-model="currentValue"
       @focus="focusHandler"
-      @blur="blur"
+      @blur="onBlur"
+      @keyup="onKeyUp"
       ref="input"/>
       <input
+      :id="`vux-x-input-${uuid}`"
       v-if="type === 'password'"
       class="weui-input"
       :maxlength="max"
@@ -84,9 +91,11 @@
       :disabled="disabled"
       v-model="currentValue"
       @focus="focusHandler"
-      @blur="blur"
+      @blur="onBlur"
+      @keyup="onKeyUp"
       ref="input"/>
       <input
+      :id="`vux-x-input-${uuid}`"
       v-if="type === 'tel'"
       class="weui-input"
       :maxlength="max"
@@ -103,14 +112,16 @@
       :disabled="disabled"
       v-model="currentValue"
       @focus="focusHandler"
-      @blur="blur"
+      @blur="onBlur"
+      @keyup="onKeyUp"
       ref="input"/>
     </div>
     <div class="weui-cell__ft">
       <icon type="clear" v-show="!equalWith && showClear && currentValue && !readonly && !disabled" @click.native="clear"></icon>
 
-      <icon class="vux-input-icon" type="warn" :title="!valid ? firstError : ''" v-show="!novalidate && !equalWith && ((touched && !valid && firstError) || (forceShowError && !valid && firstError))"></icon>
-      <icon class="vux-input-icon" type="warn" v-if="!novalidate && hasLengthEqual && dirty && equalWith && !valid"></icon>
+      <icon @click.native="onClickErrorIcon" class="vux-input-icon" type="warn" :title="!valid ? firstError : ''" v-show="showWarn"></icon>
+      <icon @click.native="onClickErrorIcon" class="vux-input-icon" type="warn" v-if="!novalidate && hasLengthEqual && dirty && equalWith && !valid"></icon>
+      
       <icon type="success" v-show="!novalidate && equalWith && equalWith === currentValue && valid"></icon>
 
       <icon type="success" class="vux-input-icon" v-show="novalidate && iconType === 'success'"></icon>
@@ -118,18 +129,27 @@
 
       <slot name="right"></slot>
     </div>
+
+    <toast
+    v-model="showErrorToast"
+    type="text"
+    width="auto"
+    :time="600">{{ firstError }}</toast>
   </div>
 </template>
 
 <script>
 import Base from '../../libs/base'
 import Icon from '../icon'
+import Toast from '../toast'
 import InlineDesc from '../inline-desc'
 
 import isEmail from 'validator/lib/isEmail'
 import isMobilePhone from 'validator/lib/isMobilePhone'
 
 import Debounce from '../../tools/debounce'
+
+import mask from 'vanilla-masker'
 
 const validators = {
   'email': {
@@ -150,12 +170,17 @@ const validators = {
   }
 }
 export default {
+  name: 'x-input',
   created () {
-    this.currentValue = this.value || ''
-    if (!this.title && !this.placeholder && !this.currentValue) {
-      console.warn('no title and no placeholder?')
+    this.currentValue = (this.value === undefined || this.value === null) ? '' : (this.mask ? this.maskValue(this.value) : this.value)
+    /* istanbul ignore if */
+    if (process.env.NODE_ENV === 'development') {
+      if (!this.title && !this.placeholder && !this.currentValue) {
+        console.warn('no title and no placeholder?')
+      }
     }
-    if (this.required && !this.currentValue) {
+
+    if (this.required && typeof this.currentValue === 'undefined') {
       this.valid = false
     }
     this.handleChangeEvent = true
@@ -165,7 +190,7 @@ export default {
       }, this.debounce)
     }
   },
-  mounted () {
+  beforeMount () {
     if (this.$slots && this.$slots['restricted-label']) {
       this.hasRestrictedLabel = true
     }
@@ -178,13 +203,10 @@ export default {
   mixins: [Base],
   components: {
     Icon,
-    InlineDesc
+    InlineDesc,
+    Toast
   },
   props: {
-    required: {
-      type: Boolean,
-      default: false
-    },
     title: {
       type: String,
       default: ''
@@ -232,14 +254,25 @@ export default {
     },
     iconType: String,
     debounce: Number,
-    placeholderAlign: String
+    placeholderAlign: String,
+    labelWidth: String,
+    mask: String,
+    shouldToastError: {
+      type: Boolean,
+      default: true
+    }
   },
   computed: {
     labelStyles () {
       return {
-        width: this.$parent.labelWidth || (this.labelWidth + 'em'),
+        width: this.labelWidthComputed || this.$parent.labelWidth || this.labelWidthComputed,
         textAlign: this.$parent.labelAlign,
         marginRight: this.$parent.labelMarginRight
+      }
+    },
+    labelClass () {
+      return {
+        'vux-cell-justify': this.$parent.labelAlign === 'justify' || this.$parent.$parent.labelAlign === 'justify'
       }
     },
     pattern () {
@@ -247,8 +280,11 @@ export default {
         return '[0-9]*'
       }
     },
-    labelWidth () {
-      return this.title.replace(/[^x00-xff]/g, '00').length / 2 + 1
+    labelWidthComputed () {
+      const width = this.title.replace(/[^x00-xff]/g, '00').length / 2 + 1
+      if (width < 10) {
+        return width + 'em'
+      }
     },
     hasErrors () {
       return Object.keys(this.errors).length > 0
@@ -259,9 +295,22 @@ export default {
           textAlign: this.textAlign
         }
       }
+    },
+    showWarn () {
+      return !this.novalidate && !this.equalWith && !this.valid && this.firstError && (this.touched || this.forceShowError)
     }
   },
   methods: {
+    onClickErrorIcon () {
+      if (this.shouldToastError && this.firstError) {
+        this.showErrorToast = true
+      }
+      this.$emit('on-click-error-icon', this.firstError)
+    },
+    maskValue (val) {
+      const val1 = this.mask ? mask.toPattern(val, this.mask) : val
+      return val1
+    },
     reset (value = '') {
       this.dirty = false
       this.currentValue = value
@@ -270,18 +319,27 @@ export default {
     },
     clear () {
       this.currentValue = ''
-      this.$refs.input.focus()
+      this.focus()
     },
     focus () {
       this.$refs.input.focus()
     },
-    focusHandler () {
-      this.$emit('on-focus', this.currentValue)
-    },
     blur () {
+      this.$refs.input.blur()
+    },
+    focusHandler ($event) {
+      this.$emit('on-focus', this.currentValue, $event)
+    },
+    onBlur ($event) {
       this.setTouched()
       this.validate()
-      this.$emit('on-blur', this.currentValue)
+      this.$emit('on-blur', this.currentValue, $event)
+    },
+    onKeyUp (e) {
+      if (e.key === 'Enter') {
+        e.target.blur()
+        this.$emit('on-enter', this.currentValue, e)
+      }
     },
     getError () {
       let key = Object.keys(this.errors)[0]
@@ -309,9 +367,17 @@ export default {
       if (typeof this.isType === 'string') {
         const validator = validators[this.isType]
         if (validator) {
-          this.valid = validator[ 'fn' ](this.currentValue)
+          let value = this.currentValue
+
+          if (this.isType === 'china-mobile' && this.mask === '999 9999 9999') {
+            value = this.currentValue.replace(/\s+/g, '')
+          }
+
+          this.valid = validator[ 'fn' ](value)
           if (!this.valid) {
+            this.forceShowError = true
             this.errors.format = validator[ 'msg' ] + '格式不对哦~'
+            this.getError()
             return
           } else {
             delete this.errors.format
@@ -390,11 +456,17 @@ export default {
       forceShowError: false,
       hasLengthEqual: false,
       valid: true,
-      currentValue: ''
+      currentValue: '',
+      showErrorToast: false
     }
     return data
   },
   watch: {
+    mask (val) {
+      if (val && this.currentValue) {
+        this.currentValue = this.maskValue(this.currentValue)
+      }
+    },
     valid () {
       this.getError()
     },
@@ -423,7 +495,7 @@ export default {
       } else {
         this.validate()
       }
-      this.$emit('input', newVal)
+      this.$emit('input', this.maskValue(newVal))
       if (this._debounce) {
         this._debounce()
       } else {
@@ -439,13 +511,14 @@ export default {
 @import '../../styles/weui/widget/weui_cell/weui_cell_global';
 @import '../../styles/weui/widget/weui_cell/weui_form/weui_form_common';
 @import '../../styles/weui/widget/weui_cell/weui_form/weui_vcode';
+
 .vux-x-input .vux-x-input-placeholder-right input::-webkit-input-placeholder {
   text-align: right;
 }
 .vux-x-input .vux-x-input-placeholder-center input::-webkit-input-placeholder {
   text-align: center;
 }
-.vux-input-icon.vux-input-icon {
+.vux-x-input .vux-input-icon {
   font-size: 21px;
 }
 .vux-input-icon.weui-icon-warn:before, .vux-input-icon.weui-icon-success:before {

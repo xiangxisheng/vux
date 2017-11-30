@@ -3,42 +3,75 @@
     <div v-transfer-dom>
       <loading v-model="isLoading"></loading>
     </div>
-    <view-box ref="viewBox" body-padding-top="46px" body-padding-bottom="55px">
-      <x-header slot="header" style="width:100%;position:absolute;left:0;top:0;z-index:100;" :left-options="leftOptions"
-      :title="title"
-      :transition="headerTransition"
-      @on-click-title="scrollTop"></x-header>
-      <div style="padding: 15px 15px;" v-show="isShowBar">
-        <button-tab>
-          <button-tab-item :selected="$i18n.locale() === 'zh-CN'" @click.native="setLocale('zh-CN')">中文</button-tab-item>
-          <button-tab-item :selected="$i18n.locale() === 'en'" @click.native="setLocale('en')">English</button-tab-item>
-        </button-tab>
+    <div v-transfer-dom>
+      <actionsheet :menus="menus" v-model="showMenu" @on-click-menu="changeLocale"></actionsheet>
+    </div>
+
+    <drawer
+    width="200px;"
+    :show.sync="drawerVisibility"
+    :show-mode="showModeValue"
+    :placement="showPlacementValue"
+    :drawer-style="{'background-color':'#35495e', width: '200px'}">
+
+      <!-- drawer content -->
+      <div slot="drawer">
+        <group title="Drawer demo(beta)" style="margin-top:20px;">
+          <cell title="Demo" link="/demo" value="演示" @click.native="drawerVisibility = false">
+          </cell>
+          <cell title="Buy me a coffee" link="project/donate" @click.native="drawerVisibility = false">
+          </cell>
+          <cell title="Github" link="http://github.com/airyland/vux" value="Star me" @click.native="drawerVisibility = false">
+          </cell>
+        </group>
+        <group title="showMode">
+          <radio v-model="showMode" :options="['push', 'overlay']" @on-change="onShowModeChange"></radio>
+        </group>
+        <group title="placement">
+          <radio v-model="showPlacement" :options="['left', 'right']" @on-change="onPlacementChange"></radio>
+        </group>
       </div>
 
-      <transition :name="'vux-pop-' + (direction === 'forward' ? 'in' : 'out')">
-        <router-view class="router-view"></router-view>
-      </transition>
+      <!-- main content -->
+      <view-box ref="viewBox" body-padding-top="46px" body-padding-bottom="55px">
+        
+        <x-header slot="header"
+        style="width:100%;position:absolute;left:0;top:0;z-index:100;"
+        :left-options="leftOptions"
+        :right-options="rightOptions"
+        :title="title"
+        :transition="headerTransition"
+        @on-click-more="onClickMore">
+          <span v-if="route.path === '/' || route.path === '/component/drawer'" slot="overwrite-left" @click="drawerVisibility = !drawerVisibility">
+            <x-icon type="navicon" size="35" style="fill:#fff;position:relative;top:-8px;left:-3px;"></x-icon>
+          </span>
+        </x-header>
+        
+        <!-- remember to import BusPlugin in main.js if you use components: x-img and sticky -->
+        <transition
+        @after-enter="$vux.bus && $vux.bus.$emit('vux:after-view-enter')" 
+        :name="'vux-pop-' + (direction === 'forward' ? 'in' : 'out')">
+          <router-view class="router-view"></router-view>
+        </transition>
 
-      <tabbar class="vux-demo-tabbar" icon-class="vux-center" v-show="!isTabbarDemo" slot="bottom">
-        <tabbar-item :link="{path:'/'}" :selected="route.path === '/'">
-          <span class="demo-icon-22 vux-demo-tabbar-icon-home" slot="icon" style="position:relative;top: -2px;">&#xe637;</span>
-          <span slot="label">Home</span>
-        </tabbar-item>
-        <tabbar-item :link="{path:'/demo'}" :selected="isDemo" badge="9">
-          <span class="demo-icon-22" slot="icon">&#xe633;</span>
-          <span slot="label"><span v-if="componentName" class="vux-demo-tabbar-component">{{componentName}}</span><span v-else>Demos</span></span>
-        </tabbar-item>
-        <tabbar-item :link="{path:'/project/donate'}" :selected="route.path === '/project/donate'" show-dot>
-          <span class="demo-icon-22" slot="icon">&#xe630;</span>
-          <span slot="label">Donate</span>
-        </tabbar-item>
-      </tabbar>
-  </view-box>
+        <tabbar class="vux-demo-tabbar" icon-class="vux-center" v-show="!isTabbarDemo" slot="bottom">
+          <tabbar-item :link="{path:'/'}" :selected="route.path === '/'">
+            <span class="demo-icon-22 vux-demo-tabbar-icon-home" slot="icon" style="position:relative;top: -2px;">&#xe637;</span>
+            <span slot="label">Home</span>
+          </tabbar-item>
+          <tabbar-item :link="{path:'/demo'}" :selected="isDemo" badge="9">
+            <span class="demo-icon-22" slot="icon">&#xe633;</span>
+            <span slot="label"><span v-if="componentName" class="vux-demo-tabbar-component">{{componentName}}</span><span v-else>Demos</span></span>
+          </tabbar-item>
+        </tabbar>
+
+      </view-box>
+    </drawer>
   </div>
 </template>
 
 <script>
-import { ButtonTab, ButtonTabItem, ViewBox, XHeader, Tabbar, TabbarItem, Loading, TransferDomDirective as TransferDom } from 'vux'
+import { Radio, Group, Cell, Badge, Drawer, Actionsheet, ButtonTab, ButtonTabItem, ViewBox, XHeader, Tabbar, TabbarItem, Loading, TransferDom } from 'vux'
 import { mapState, mapActions } from 'vuex'
 
 export default {
@@ -46,42 +79,56 @@ export default {
     TransferDom
   },
   components: {
+    Radio,
+    Group,
+    Cell,
+    Badge,
+    Drawer,
     ButtonTab,
     ButtonTabItem,
     ViewBox,
     XHeader,
     Tabbar,
     TabbarItem,
-    Loading
+    Loading,
+    Actionsheet
   },
   methods: {
-    reload () {
-      document.location.reload()
+    onShowModeChange (val) {
+      /** hide drawer before changing showMode **/
+      this.drawerVisibility = false
+      setTimeout(one => {
+        this.showModeValue = val
+      }, 400)
     },
-    scrollTop () {
-      this.$refs.viewBox.scrollTo(0)
+    onPlacementChange (val) {
+      /** hide drawer before changing position **/
+      this.drawerVisibility = false
+      setTimeout(one => {
+        this.showPlacementValue = val
+      }, 400)
+    },
+    onClickMore () {
+      this.showMenu = true
+    },
+    changeLocale (locale) {
+      this.$i18n.set(locale)
+      this.$locale.set(locale)
     },
     ...mapActions([
       'updateDemoPosition'
-    ]),
-    setLocale (locale) {
-      this.$i18n.set(locale)
-      this.$locale.set(locale)
-    }
+    ])
   },
   mounted () {
     this.handler = () => {
       if (this.path === '/demo') {
-        this.updateDemoPosition(this.$refs.viewBox.getScrollTop())
+        this.box = document.querySelector('#demo_list_box')
+        this.updateDemoPosition(this.box.scrollTop)
       }
-    }
-    this.box = this.$refs.viewBox.getScrollBody()
-    if (this.path === '/demo') {
-      this.box.addEventListener('scroll', this.handler, false)
     }
   },
   beforeDestroy () {
-    this.box.removeEventListener('scroll', this.handler, false)
+    this.box && this.box.removeEventListener('scroll', this.handler, false)
   },
   watch: {
     path (path) {
@@ -90,21 +137,15 @@ export default {
         return
       }
       if (path === '/demo') {
-        this.box.removeEventListener('scroll', this.handler, false)
-        this.box.addEventListener('scroll', this.handler, false)
+        setTimeout(() => {
+          this.box = document.querySelector('#demo_list_box')
+          if (this.box) {
+            this.box.removeEventListener('scroll', this.handler, false)
+            this.box.addEventListener('scroll', this.handler, false)
+          }
+        }, 1000)
       } else {
-        this.box.removeEventListener('scroll', this.handler, false)
-      }
-      if (path === '/demo' && this.demoTop) {
-        this.$nextTick(() => {
-          setTimeout(() => {
-            this.box.scrollTop = this.demoTop
-          }, 550)
-        })
-      } else {
-        this.$nextTick(() => {
-          this.box.scrollTop = 0
-        })
+        this.box && this.box.removeEventListener('scroll', this.handler, false)
       }
     }
   },
@@ -128,6 +169,11 @@ export default {
         showBack: this.route.path !== '/'
       }
     },
+    rightOptions () {
+      return {
+        showMore: true
+      }
+    },
     headerTransition () {
       return this.direction === 'forward' ? 'vux-header-fade-in-right' : 'vux-header-fade-in-left'
     },
@@ -148,6 +194,21 @@ export default {
       if (this.route.path === '/project/donate') return 'Donate'
       if (this.route.path === '/demo') return 'Demo list'
       return this.componentName ? `Demo/${this.componentName}` : 'Demo/~~'
+    }
+  },
+  data () {
+    return {
+      showMenu: false,
+      menus: {
+        'language.noop': '<span class="menu-title">Language</span>',
+        'zh-CN': '中文',
+        'en': 'English'
+      },
+      drawerVisibility: false,
+      showMode: 'push',
+      showModeValue: 'push',
+      showPlacement: 'left',
+      showPlacementValue: 'left'
     }
   }
 }
@@ -215,81 +276,51 @@ html, body {
 
 .demo-icon {
   font-family: 'vux-demo';
-  font-size:20px;
+  font-size: 20px;
   color: #04BE02;
+}
+
+.demo-icon-big {
+  font-size: 28px;
 }
 
 .demo-icon:before {
   content: attr(icon);
 }
 
-/**
-* vue-router transition
-*/
 .router-view {
   width: 100%;
-  animation-duration: 0.5s;
-  animation-fill-mode: both;
-  backface-visibility: hidden;
+  top: 46px;
 }
 .vux-pop-out-enter-active,
 .vux-pop-out-leave-active,
 .vux-pop-in-enter-active,
 .vux-pop-in-leave-active {
   will-change: transform;
+  transition: all 500ms;
   height: 100%;
+  top: 46px;
   position: absolute;
-  left: 0;
+  backface-visibility: hidden;
+  perspective: 1000;
 }
-.vux-pop-out-enter-active {
-  animation-name: popInLeft;
+.vux-pop-out-enter {
+  opacity: 0;
+  transform: translate3d(-100%, 0, 0);
 }
 .vux-pop-out-leave-active {
-  animation-name: popOutRight;
+  opacity: 0;
+  transform: translate3d(100%, 0, 0);
 }
-.vux-pop-in-enter-active {
-  perspective: 1000;
-  animation-name: popInRight;
+.vux-pop-in-enter {
+  opacity: 0;
+  transform: translate3d(100%, 0, 0);
 }
 .vux-pop-in-leave-active {
-  animation-name: popOutLeft;
+  opacity: 0;
+  transform: translate3d(-100%, 0, 0);
 }
-@keyframes popInLeft {
-  from {
-    opacity: 0;
-    transform: translate3d(-100%, 0, 0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-}
-@keyframes popOutLeft {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-    transform: translate3d(-100%, 0, 0);
-  }
-}
-@keyframes popInRight {
-  from {
-    opacity: 0;
-    transform: translate3d(100%, 0, 0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-}
-@keyframes popOutRight {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-    transform: translate3d(100%, 0, 0);
-  }
+.menu-title {
+  color: #888;
 }
 </style>

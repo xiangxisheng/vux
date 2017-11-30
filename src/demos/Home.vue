@@ -9,47 +9,47 @@
       <p class="vux-notice">v{{version}}</p>
     </div>
     <group>
-      <cell title="Demo" link="/demo" value="演示">
+      <cell title="Live Demo" link="/demo">
         <span class="demo-icon" slot="icon" style="color:#F70968">&#xe633;</span>
-      </cell>
-    </group>
-    <group>
-      <cell title="Buy me a coffee" link="project/donate">
-        <span class="demo-icon" slot="icon" style="color:red;">&#xe630;</span>
-        <badge text="捐赠"></badge>
       </cell>
       <cell title="Github" link="http://github.com/airyland/vux" value="Star me">
         <span class="demo-icon" slot="icon" style="color:#35495e;">&#xe62f;</span>
       </cell>
     </group>
-    <p class="demo-tip">{{$t('demo tip')}}</p>
+    <br>
+    <p class="vue-version">current vue version: {{ vueVersion }}</p>
   </div>
 </template>
 
-<i18n>
-demo tip:
-  en: It takes time when switching pages not because of slow rendering each component but because of code splitting for each page. 
-  zh-CN: demo 为了避免打包过大，每个路由都进行了代码分割，因此并非组件渲染慢，而是切换路由时异步加载代码需要时间。
-</i18n>
-
 <script>
-import { Cell, Group, Badge } from 'vux'
-const version = require('../../package.json').version
+import { Cell, Group, Badge, Divider } from 'vux'
+
+const pkg = require('../../package.json')
+const version = pkg.version
+const vueVersion = pkg.devDependencies.vue
+
 export default {
   components: {
     Cell,
     Group,
-    Badge
+    Badge,
+    Divider
   },
   data () {
     return {
-      version: version
+      version,
+      vueVersion
     }
   }
 }
 </script>
 
 <style scoped>
+.vue-version {
+  text-align: center;
+  font-size: 12px;
+  color: #ccc;
+}
 .center {
   margin-top: 15px;
   text-align: center;

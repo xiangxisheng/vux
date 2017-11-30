@@ -20,11 +20,11 @@ props:
     default: ''
     en: label text
     zh-CN: 标题文字
-  value: 
-    type: String
+  value:
+    type: Array
     default: ''
-    en: form's value, use `v-model` for binding
-    zh-CN: 表单值，`v-model`绑定
+    en: "form's value, use `v-model` for binding. For example, ['2017-01-15', '03', '05']"
+    zh-CN: "表单值，`v-model`绑定。比如，['2017-01-15', '03', '05']"
   inline-desc:
     type: String
     default: ''
@@ -33,15 +33,15 @@ props:
   placeholder:
     type: String
     default: ''
-    en: placeholder
-    zh-CN: 提示文字
+    en: placeholder, works when `value` is empty
+    zh-CN: 提示文字，当`value`为空时显示
   start-date:
     type: String
-    en: start date
+    en: start date (YYYY-MM-DD)
     zh-CN: '限定最小日期，注意该限制只能限定到日期，不能限定到小时分钟'
   end-date:
     type: String
-    en: end date
+    en: end date (YYYY-MM-DD)
     zh-CN: 限定最大日期，注意该限制只能限定到日期，不能限定到小时分钟
   format:
     default: 'YYYY-MM-DD'
@@ -53,6 +53,11 @@ events:
     en: $emits when value changes, `(newVal)`
     zh-CN: 表单值变化时触发, 参数 `(newVal)`
 changes:
+  v2.2.0:
+    en:
+      - '[enhance] Use better column width'
+    zh-CN:
+      - '[enhance] 优化宽度，避免日期栏和左边缘距离过近'
   v2.1.1-rc.9:
     en:
       - '[feature] new component #970 @327326724'

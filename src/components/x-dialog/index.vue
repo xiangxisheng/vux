@@ -1,10 +1,12 @@
 <template>
-  <div class="vux-x-dialog" @touchmove="onTouchMove">
+  <div
+    class="vux-x-dialog"
+    :class="{'vux-x-dialog-absolute': layout === 'VIEW_BOX'}">
     <transition :name="maskTransition">
-      <div class="weui-mask" @click="hideOnBlur && (currentValue = false)" v-show="currentValue"></div>
+      <div class="weui-mask" @click="hide" v-show="show" :style="maskStyle"></div>
     </transition>
     <transition :name="dialogTransition">
-      <div class="weui-dialog" v-show="currentValue" >
+      <div :class="dialogClass" v-show="show" :style="dialogStyle">
         <slot></slot>
       </div>
     </transition>
@@ -12,9 +14,17 @@
 </template>
 
 <script>
+import preventBodyScrollMixin from '../../mixins/prevent-body-scroll'
+
 export default {
+  mixins: [preventBodyScrollMixin],
+  name: 'x-dialog',
+  model: {
+    prop: 'show',
+    event: 'change'
+  },
   props: {
-    value: {
+    show: {
       type: Boolean,
       default: false
     },
@@ -22,41 +32,76 @@ export default {
       type: String,
       default: 'vux-mask'
     },
+    maskZIndex: [String, Number],
     dialogTransition: {
       type: String,
       default: 'vux-dialog'
     },
+    dialogClass: {
+      type: String,
+      default: 'weui-dialog'
+    },
     hideOnBlur: Boolean,
+    dialogStyle: Object,
     scroll: {
       type: Boolean,
-      default: true
+      default: true,
+      validator (val) {
+        /* istanbul ignore if */
+        if (process.env.NODE_ENV === 'development' && val === false) {
+          console.warn('[VUX warn] x-dialog:scroll 已经废弃。如果你是 100% 布局，请参照文档配置 $layout 以实现阻止滚动')
+        }
+        return true
+      }
     }
   },
-  created () {
-    if (typeof this.value !== 'undefined') {
-      this.currentValue = this.value
+  computed: {
+    maskStyle () {
+      if (typeof this.maskZIndex !== 'undefined') {
+        return {
+          zIndex: this.maskZIndex
+        }
+      }
+    }
+  },
+  mounted () {
+    if (typeof window !== 'undefined') {
+      if (window.VUX_CONFIG && window.VUX_CONFIG.$layout === 'VIEW_BOX') {
+        this.layout = 'VIEW_BOX'
+      }
     }
   },
   watch: {
-    value: {
-      handler: function (val) {
-        this.currentValue = val
-      },
-      immediate: true
-    },
-    currentValue (val) {
+    show (val) {
+      this.$emit('update:show', val)
       this.$emit(val ? 'on-show' : 'on-hide')
-      this.$emit('input', val)
+      if (val) {
+        this.addModalClassName()
+      } else {
+        this.removeModalClassName()
+      }
+    }
+  },
+  methods: {
+    shouldPreventScroll () {
+      // hard to get focus on iOS device with fixed position, so just ignore it
+      const iOS = /iPad|iPhone|iPod/i.test(window.navigator.userAgent)
+      const hasInput = this.$el.querySelector('input') || this.$el.querySelector('textarea')
+      if (iOS && hasInput) {
+        return true
+      }
+    },
+    hide () {
+      if (this.hideOnBlur) {
+        this.$emit('update:show', false)
+        this.$emit('change', false)
+        this.$emit('on-click-mask')
+      }
     }
   },
   data () {
     return {
-      currentValue: false
-    }
-  },
-  methods: {
-    onTouchMove: function (event) {
-      !this.scroll && event.preventDefault()
+      layout: ''
     }
   }
 }
@@ -66,4 +111,9 @@ export default {
 @import '../../styles/transition.less';
 @import '../../styles/weui/widget/weui_tips/weui_mask';
 @import '../../styles/weui/widget/weui_tips/weui_dialog';
+@import '../../styles/vux-modal.css';
+
+.vux-x-dialog-absolute .weui-dialog {
+  position: absolute
+}
 </style>
